@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ExceptionHandler.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersModelsController : ControllerBase
     {
         private readonly AppDbContext _context;
