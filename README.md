@@ -21,4 +21,4 @@ nuget restore
 update-Database
 ```
 5. Run Project 
-[runproject](https://github.com/tuanvynguyen1/ExceptionHandler/blob/master/images/run.png)
+![runproject](https://github.com/tuanvynguyen1/ExceptionHandler/blob/master/images/run.png)
