@@ -19,5 +19,13 @@ namespace DataLayer.Encryption
 
             }
         }
+
+        
+
+        public bool verify(string password, string encryptedPassword)
+        {
+            if (Hash(password) == encryptedPassword) return true;
+            return false;
+        }
     }
 }

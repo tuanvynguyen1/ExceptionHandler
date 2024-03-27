@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataLayer.DTOs.Users;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace DataLayer.Interfaces
 {
     public interface IAuthenticationServices
     {
+        Task<(string token, string refreshToken)> LoginAsync(UserLoginDTO userdata);
     }
 }

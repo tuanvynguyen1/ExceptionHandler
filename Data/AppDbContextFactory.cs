@@ -13,7 +13,7 @@ namespace Data
         public AppDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer("Data Source=DESKTOP-MMF70IT;Initial Catalog=temp;User ID=sa;Password=15022000Vy!;Multiple Active Result Sets=True;Trust Server Certificate=True");
+            optionsBuilder.UseSqlServer("Data Source=HU-VYNHT-K2;Initial Catalog=WorkingDB;User ID=sa;Password=15022000Vy!;Multiple Active Result Sets=True;Trust Server Certificate=True");
 
             return new AppDbContext(optionsBuilder.Options);
         }

@@ -12,7 +12,15 @@ namespace Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         { }
-
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            new DbInitializer(modelBuilder).Seed();
+        }
         public virtual DbSet<Entities.UsersModel> Users { get; set; } = default!;
+        public virtual DbSet<Entities.JobModel> Jobs { get; set; } = default!;
+
+        public virtual DbSet<Entities.SkillModel> Skill { get; set; } = default!;
+        public virtual DbSet<Entities.UserSkillModel> UserSkills { get; set; } = default!;
     }
 }

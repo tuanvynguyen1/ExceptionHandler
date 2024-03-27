@@ -1,5 +1,6 @@
 using AutoMapper;
 using Data;
+using DataLayer.Authentication;
 using DataLayer.AutoMapper;
 using DataLayer.Encryption;
 using DataLayer.Interfaces;
@@ -16,7 +17,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IPasswordHasher, MD5>();
+builder.Services.AddSingleton<IJWTHelper, JWTHelper>();
+
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
 //Automapper
 builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 {
