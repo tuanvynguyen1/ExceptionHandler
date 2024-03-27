@@ -10,7 +10,7 @@
 
 1.  Clone this project
 2.  Open ExceptionHandler.sln
-![appsetting](https://github.com/tuanvynguyen1/ExceptionHandler/tree/master/images/appsettings.png) 
+![appsetting](https://github.com/tuanvynguyen1/ExceptionHandler/blob/master/images/appsettings.png)
 ```
 Data Source=<Name_Server>;Initial Catalog=<Name_DB>;User ID=<User>;Password=<Password>;Multiple Active Result Sets=True;Trust Server Certificate=True
 ```
@@ -21,4 +21,4 @@ nuget restore
 update-Database
 ```
 5. Run Project 
-![runproject](https://github.com/tuanvynguyen1/ExceptionHandler/tree/master/images/run.png) 
+[runproject](https://github.com/tuanvynguyen1/ExceptionHandler/blob/master/images/run.png)
