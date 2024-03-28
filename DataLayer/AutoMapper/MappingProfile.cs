@@ -19,6 +19,8 @@ namespace DataLayer.AutoMapper
 
             CreateMap<UserRegisterDTO, UsersModel>().ForMember(dest=>dest.Password, opt => opt.MapFrom(scr => _pwdHasher.Hash(scr.Password)));
             CreateMap<UsersModel, UserDTO>();
+            //Reverse can map from 1->2 || 2->1
+            CreateMap<UsersModel, UserInfoDTO>().ReverseMap(); 
 
         }
     }

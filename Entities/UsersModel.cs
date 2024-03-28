@@ -24,6 +24,7 @@ namespace Entities
         [Required]
         [RegularExpression("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", ErrorMessage = "Email format is not Valid!")]
         [StringLength(70, MinimumLength = 5, ErrorMessage = "Email length must between 5 and 70 character")]
+  
         public string Email { get; set; }
         [JsonIgnore]
         [Required]
@@ -31,6 +32,7 @@ namespace Entities
         public string Password { get; set; }
         [Required]
         [StringLength(50, MinimumLength = 8, ErrorMessage = "Username must contain atleast 8 character and maximum to 50 character")]
+
         public string UserName { get; set; }
         [Required]
         [RegularExpression("(84|0[3|5|7|8|9])+([0-9]{8})", ErrorMessage = "Phone number is not valid format!")]

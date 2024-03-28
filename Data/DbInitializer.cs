@@ -21,7 +21,7 @@ namespace Data
         {
             modelBuilder.Entity<UsersModel>().HasData(
                    new UsersModel() {
-                    Id = 1,
+                    Id= 1,
                     UserName = "fszymanowski0",
                     FirstName = "Fawnia",
                     LastName = "Szymanowski",
@@ -31,7 +31,7 @@ namespace Data
 
                    },
                    new UsersModel() {
-                       Id =2,
+                       Id = 2,
                        UserName = "apeacocke1",
                        FirstName = "Fawnia",
                        LastName = "Alexandros",

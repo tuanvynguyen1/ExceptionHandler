@@ -27,6 +27,25 @@ namespace DataLayer.Services
             _context = context;
             _mapper = mapper;
         }
+
+        public async Task<ServiceResponse<UserInfoDTO>> GetUserInfoAsync(string? id)
+        {
+            var serviceResponse = new ServiceResponse<UserInfoDTO>();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(id));  
+            if (user == null)
+            {
+
+                serviceResponse.ResponseType = EResponseType.NotFound;
+            }
+            else
+            {
+                UserInfoDTO u = _mapper.Map<UserInfoDTO>(user);
+                serviceResponse.Data = u;
+            }
+
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<UserDTO>> RegisterAsync(UserRegisterDTO user)
         {
             var serviceResponse = new ServiceResponse<UserDTO>();
@@ -37,13 +56,45 @@ namespace DataLayer.Services
                 await _context.SaveChangesAsync();
                 serviceResponse.Data = _mapper.Map<UserDTO>(toAdd);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateException ex)
             {
                 serviceResponse.ResponseType = EResponseType.CannotCreate;
-                serviceResponse.Message = "Email already in use by another User. Please login or choose different.";
+                serviceResponse.Message = "Username/Email already taken by another User. Please reset or choose different.";
             }
             catch { throw; }
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<UserDTO>> updateUserInfo(UserInfoDTO updateUser, string? id)
+        {
+
+            var serviceResponse = new ServiceResponse<UserDTO>();
+
+
+            try {
+
+                var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == (id == null ? -1 : int.Parse(id)));
+                if (user == null)
+                {
+
+                    serviceResponse.ResponseType = EResponseType.NotFound;
+                }
+                else
+                {
+                    user = _mapper.Map(updateUser, user);
+                    serviceResponse.ResponseType = EResponseType.Success;
+                    serviceResponse.Message = "Update User Successful";
+                    serviceResponse.Data = _mapper.Map<UserDTO>(user);
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                serviceResponse.ResponseType = EResponseType.CannotUpdate;
+                serviceResponse.Message = "Error Occur While updating data.";
+            }
+            return serviceResponse;
+        }
+
+        
     }
 }

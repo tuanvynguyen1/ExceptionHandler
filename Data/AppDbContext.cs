@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,19 @@ namespace Data
 {
     public class AppDbContext : DbContext
     {
+        
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        { }
+        { 
+  
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
+
+;
+
+            modelBuilder.Entity<UsersModel>().HasIndex(p => p.Email).IsUnique();
+            modelBuilder.Entity<UsersModel>().HasIndex(p => p.UserName).IsUnique();
             base.OnModelCreating(modelBuilder);
             new DbInitializer(modelBuilder).Seed();
         }
