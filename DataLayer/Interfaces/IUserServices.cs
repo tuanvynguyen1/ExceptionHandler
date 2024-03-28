@@ -11,5 +11,7 @@ namespace DataLayer.Interfaces
     public interface IUserServices
     {
         Task<ServiceResponse<UserDTO>> RegisterAsync(UserRegisterDTO user);
+        Task<ServiceResponse<UserDTO>> updateUserInfo(UserInfoDTO updateUser, string? id);
+        Task<ServiceResponse<UserInfoDTO>> GetUserInfoAsync(string? id);
     }
 }

@@ -10,5 +10,6 @@ namespace DataLayer.Interfaces
     public interface IAuthenticationServices
     {
         Task<(string token, string refreshToken)> LoginAsync(UserLoginDTO userdata);
+
     }
 }

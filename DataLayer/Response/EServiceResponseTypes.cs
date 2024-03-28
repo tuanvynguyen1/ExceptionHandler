@@ -8,7 +8,8 @@
             NotFound,
             CannotCreate,
             CannotUpdate,
-            CannotDelete
+            CannotDelete,
+            Forbid
         }
     }
 }

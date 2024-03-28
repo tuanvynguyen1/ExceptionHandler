@@ -9,51 +9,53 @@ using DataLayer.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using NuGet.Common;
+using System.Security.Claims;
 namespace ExceptionHandler.Controllers
 {
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly Microsoft.Extensions.Logging.ILogger _logger;
         private readonly IUserServices _userServices;
-        private readonly IAuthenticationServices _authService;
-        public UserController(ILogger<UserController> logger, IUserServices userService, IAuthenticationServices authService)
+        public UserController(ILogger<UserController> logger, IUserServices userService)
         {
             _logger = logger;
             _userServices = userService;
-            _authService = authService;
+
         }
-        [AllowAnonymous]
-        [Route("/register")]
+        
+        [Route("/update")]
         [Produces("application/json")]
         [HttpPost]
-        public async Task<ActionResult> Register(UserRegisterDTO userdata)
+        
+        public async Task<ActionResult> Update(UserInfoDTO userdata)
         {
-            var serviceResponse = await _userServices.RegisterAsync(userdata);
-            return new ObjectResult(new
+            var claims = User.Claims.Where(x => x.Type == "UserId").FirstOrDefault();
+            string? userid = claims == null ? null : claims.Value.ToString();
+            var serviceResponse = await _userServices.updateUserInfo(userdata, userid);
+            return serviceResponse.ResponseType switch
             {
-                message = "Register Successful",
-            })
-            {
-                StatusCode = 200,
-                ContentTypes = new MediaTypeCollection { "application/json" },
+                EResponseType.Success => Ok(serviceResponse.Data),
+                EResponseType.CannotUpdate => BadRequest(serviceResponse.Message),
+                EResponseType.Forbid => Forbid(serviceResponse.Message),
+                _ => throw new NotImplementedException()
             };
         }
-        [AllowAnonymous]
-        [Route("/login")]
+        [Route("/me")]
         [Produces("application/json")]
-        [HttpPost]
-        public async Task<ActionResult> Login(UserLoginDTO userdata)
+        [HttpGet]
+        public async Task<ActionResult> get()
         {
-            var (token, refreshToken) = await _authService.LoginAsync(userdata);
-             return new ObjectResult(new
+            var claims = User.Claims.Where(x => x.Type == "UserId").FirstOrDefault();
+            string? userid = claims == null ? null : claims.Value.ToString();
+            var serviceResponse = await _userServices.GetUserInfoAsync(userid);
+            return serviceResponse.ResponseType switch
             {
-                token = token,
-                refresh = refreshToken
-            })
-            {
-                StatusCode = 200,
-                ContentTypes = new MediaTypeCollection { "application/json" },
+                EResponseType.Success => Ok(serviceResponse.Data),
+                EResponseType.NotFound => BadRequest(serviceResponse.Message),
+                EResponseType.Forbid => Forbid(serviceResponse.Message),
+                _ => throw new NotImplementedException()
             };
         }
     }

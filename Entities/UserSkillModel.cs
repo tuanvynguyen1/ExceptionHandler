@@ -18,9 +18,9 @@ namespace Entities
 
         public int SkillId { get; set; }
         [ForeignKey(nameof(SkillId))]
-        public SkillModel Skill { get; init; }
+        public virtual SkillModel Skill { get; init; }
         [JsonIgnore]
-        public UsersModel User { get; init; }
+        public virtual UsersModel User { get; init; }
         public byte YearOfExperience { get; set; } = 0;
     }
 }
