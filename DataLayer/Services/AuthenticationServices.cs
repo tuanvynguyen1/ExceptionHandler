@@ -1,14 +1,18 @@
-﻿using Data;
+﻿using AutoMapper;
+using Data;
 using DataLayer.Authentication;
+using DataLayer.DTOs.Authentication;
 using DataLayer.DTOs.Users;
 using DataLayer.Encryption;
 using DataLayer.Interfaces;
+using DataLayer.Response;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static DataLayer.Response.EServiceResponseTypes;
 
 namespace DataLayer.Services
 {
@@ -17,14 +21,17 @@ namespace DataLayer.Services
         private readonly AppDbContext _context;
         private readonly IPasswordHasher _pwHasher;
         private readonly IJWTHelper _jWTHelper;
-        public AuthenticationServices(AppDbContext context, IPasswordHasher pwhasher, IJWTHelper jWTHelper)
+        private readonly IMapper _mapper;
+        public AuthenticationServices(AppDbContext context, IPasswordHasher pwhasher, IJWTHelper jWTHelper, IMapper mapper)
         {
             _context = context;
             _pwHasher = pwhasher;
             _jWTHelper = jWTHelper;
+            _mapper = mapper;
         }
-        public async Task<(string token, string refreshToken)> LoginAsync(UserLoginDTO userdata)
+        public async Task<ServiceResponse<CredentialDTO>> LoginAsync(UserLoginDTO userdata)
         {
+            var serviceResponse = new ServiceResponse<CredentialDTO>();
             try
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == userdata.UserName);
@@ -33,12 +40,26 @@ namespace DataLayer.Services
                     var checkCredential = _pwHasher.verify(userdata.Password, user.Password);
                     if (checkCredential)
                     {
+                        string token = _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMinutes(10));
+                        string refreshToken = _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMonths(6));
+                        serviceResponse.Data = _mapper.Map<CredentialDTO>(user);
+                        serviceResponse.Data.RefreshToken = refreshToken;
+                        serviceResponse.Data.Token = token;
+                    }
+                    else
+                    {
+                        serviceResponse.ResponseType = EResponseType.Unauthorized;
+                        serviceResponse.Message = "Login Fail! Wrong password.";
 
-                        return (_jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMinutes(10)), _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMonths(6)));
                     }
                 }
+                else
+                {
+                    serviceResponse.ResponseType = EResponseType.Unauthorized;
+                    serviceResponse.Message = "Login Fail! Could not found Account by Username!.";
+                }
 
-                return (null, null);
+                return serviceResponse;
             }
             catch
             {

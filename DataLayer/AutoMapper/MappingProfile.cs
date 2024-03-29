@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DataLayer.DTOs.Authentication;
 using DataLayer.DTOs.Users;
 using DataLayer.Encryption;
 using Entities;
@@ -21,6 +22,7 @@ namespace DataLayer.AutoMapper
             CreateMap<UsersModel, UserDTO>();
             //Reverse can map from 1->2 || 2->1
             CreateMap<UsersModel, UserInfoDTO>().ReverseMap(); 
+            CreateMap<UsersModel, CredentialDTO>().ReverseMap();
 
         }
     }

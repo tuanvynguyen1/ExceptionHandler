@@ -1,4 +1,6 @@
-﻿using DataLayer.DTOs.Users;
+﻿using DataLayer.DTOs.Authentication;
+using DataLayer.DTOs.Users;
+using DataLayer.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace DataLayer.Interfaces
 {
     public interface IAuthenticationServices
     {
-        Task<(string token, string refreshToken)> LoginAsync(UserLoginDTO userdata);
+        Task<ServiceResponse<CredentialDTO>> LoginAsync(UserLoginDTO userdata);
 
     }
 }

@@ -7,6 +7,7 @@ using DataLayer.Interfaces;
 using DataLayer.Services;
 using Entities.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -74,7 +75,7 @@ var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found."));
 builder.Services.AddSingleton<IPasswordHasher, MD5>();
 builder.Services.AddSingleton<IJWTHelper, JWTHelper>();
-
+builder.Services.AddTransient<IEmailSender, EmailSenderServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
 //Automapper

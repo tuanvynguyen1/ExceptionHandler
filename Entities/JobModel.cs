@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Entities
 {
-    public class JobModel
+    public class JobModel : BaseModel
     {
         public enum job_status
         {

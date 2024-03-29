@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Entities
 {
-    public class SkillModel
+    public class SkillModel : BaseModel
     {
 
         [Key]

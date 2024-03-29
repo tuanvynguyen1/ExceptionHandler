@@ -1,5 +1,6 @@
 ﻿using DataLayer.DTOs.Users;
 using DataLayer.Interfaces;
+using DataLayer.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -40,16 +41,13 @@ namespace ExceptionHandler.Controllers
         [HttpPost]
         public async Task<ActionResult> Login(UserLoginDTO userdata)
         {
-            var (token, refreshToken) = await _authService.LoginAsync(userdata);
-            return new ObjectResult(new
+            var serviceResponse = await _authService.LoginAsync(userdata);
+            return serviceResponse.ResponseType switch
             {
-                token = "Bearer " + token,
-                refresh = "Bearer " + refreshToken,
-                data = userdata
-            })
-            {
-                StatusCode = 200,
-                ContentTypes = new MediaTypeCollection { "application/json" },
+                EResponseType.Success => CreatedAtAction(nameof(Register), new { version = "1" }, serviceResponse.Data),
+                EResponseType.Unauthorized => BadRequest(serviceResponse.Message),
+                EResponseType.BadRequest => BadRequest(serviceResponse.Message),    
+                _ => throw new NotImplementedException()
             };
         }
     }

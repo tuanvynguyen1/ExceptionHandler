@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Entities
 {
-    public class UserSkillModel
+    public class UserSkillModel : BaseModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

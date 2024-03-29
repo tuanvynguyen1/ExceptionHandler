@@ -9,7 +9,9 @@
             CannotCreate,
             CannotUpdate,
             CannotDelete,
-            Forbid
+            Forbid,
+            BadRequest,
+            Unauthorized
         }
     }
 }
