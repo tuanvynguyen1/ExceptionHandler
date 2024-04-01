@@ -13,7 +13,7 @@ namespace DataLayer.DTOs.Users
     public class UserRegisterDTO : PasswordDTO
     {
         [Required]
-        [StringLength(50, MinimumLength = 5, ErrorMessage = "Last Name must contain at least 5 character and maximum to 50 character")]
+        [StringLength(50, MinimumLength = 5, ErrorMessage = "First Name must contain at least 5 character and maximum to 50 character")]
         public string FirstName { get; set; }
 
         [Required]

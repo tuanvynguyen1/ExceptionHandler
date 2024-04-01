@@ -28,7 +28,13 @@ namespace Data
             new DbInitializer(modelBuilder).Seed();
         }
 
-        
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Data Source=HU-VYNHT-K2;Initial Catalog=WDB;User ID=sa;Password=15022000Vy!;Trusted_Connection=True;MultipleActiveResultSets=true; TrustServerCertificate=True");
+            }
+        }
 
         public virtual DbSet<Entities.UsersModel> Users { get; set; } = default!;
         public virtual DbSet<Entities.JobModel> Jobs { get; set; } = default!;
@@ -36,7 +42,8 @@ namespace Data
         public virtual DbSet<Entities.SkillModel> Skill { get; set; } = default!;
         public virtual DbSet<Entities.UserSkillModel> UserSkills { get; set; } = default!;
 
-
+        public virtual DbSet<Entities.RoleModel> Roles { get; set; } = default!;
+        public virtual DbSet<Entities.UserRoleModel> UserRoles { get; set; } = default!;
 
         public override int SaveChanges()
         {

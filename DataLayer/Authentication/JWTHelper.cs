@@ -22,14 +22,18 @@ namespace DataLayer.Authentication
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Secret").Value ?? throw new InvalidOperationException("Connection string 'Secret' not found."));
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var claims = new List<Claim>
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("UserId", id.ToString()) }),
-                Expires = expire,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-
+                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim(ClaimTypes.Role, "User"),
+                new Claim(ClaimTypes.NameIdentifier, id.ToString())
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: expire,
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            );
             return tokenHandler.WriteToken(token);
         }
     }

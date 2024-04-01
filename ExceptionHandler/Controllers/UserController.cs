@@ -13,7 +13,7 @@ using System.Security.Claims;
 namespace ExceptionHandler.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class UserController : ControllerBase
     {
         private readonly Microsoft.Extensions.Logging.ILogger _logger;
@@ -47,8 +47,7 @@ namespace ExceptionHandler.Controllers
         [HttpGet]
         public async Task<ActionResult> get()
         {
-            var claims = User.Claims.Where(x => x.Type == "UserId").FirstOrDefault();
-            string? userid = claims == null ? null : claims.Value.ToString();
+            var userid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var serviceResponse = await _userServices.GetUserInfoAsync(userid);
             return serviceResponse.ResponseType switch
             {

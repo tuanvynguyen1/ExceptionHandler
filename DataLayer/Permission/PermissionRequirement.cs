@@ -10,7 +10,9 @@ namespace DataLayer.Permission
 {
     public class PermissionRequirement: IAuthorizationRequirement
     {
-        public PermissionRequirement() { }
+        public PermissionRequirement(PermissionEnum permission) {
+            Permission = permission;
+        }
         public PermissionEnum Permission { get; }
     }
 }

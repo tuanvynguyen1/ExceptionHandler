@@ -60,5 +60,6 @@ namespace Entities
         [JsonIgnore, Required]
         public bool isDeleted { get; set; } = false;
 
+
     }
 }

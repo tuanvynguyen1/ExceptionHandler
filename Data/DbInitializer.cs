@@ -78,6 +78,26 @@ namespace Data
                         SkillDescription = "Knowledge some of popular algorithm. Like: Sort, Search, Recursive,..."
                     }
                 );
+            modelBuilder.Entity<RoleModel>().HasData(
+                new RoleModel()
+                {
+                    Id = 1,
+                    RoleName = "Admin",
+                    RoleDescription = "LÀ admin cuyền lực."
+                },
+                new RoleModel()
+                {
+                    Id = 2,
+                    RoleName = "TimViec",
+                    RoleDescription = "Là nole tư bản đi tìm kiếm miếng cơm manh áo."
+                },
+                new RoleModel()
+                {
+                    Id = 3,
+                    RoleName = "PhatViec",
+                    RoleDescription = "Là tư bản đi kiếm những con chiêng ngoan đạo."
+                }
+                );
         }
     }
 }
