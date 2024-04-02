@@ -2,10 +2,13 @@ using AutoMapper;
 using Data;
 using DataLayer.Authentication;
 using DataLayer.AutoMapper;
+using DataLayer.Email;
 using DataLayer.Encryption;
 using DataLayer.Interfaces;
 using DataLayer.Services;
 using Entities.Config;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +81,15 @@ builder.Services.AddSingleton<IJWTHelper, JWTHelper>();
 builder.Services.AddTransient<IEmailSender, EmailSenderServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
+
+//Add Hangfire 
+builder.Services.AddHangfire(configuration => configuration
+                    .UseSqlServerStorage(builder.Configuration.GetConnectionString("AppDbContext")));
+
+builder.Services.AddHangfireServer();
+
+builder.Services.AddHangfireServer();
+
 //Automapper
 builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 {

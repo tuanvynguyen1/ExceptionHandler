@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -59,6 +60,7 @@ namespace Entities
 
         [JsonIgnore, Required]
         public bool isDeleted { get; set; } = false;
+
 
 
     }

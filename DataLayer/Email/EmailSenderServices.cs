@@ -8,7 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Services
+namespace DataLayer.Email
 {
     public class EmailSenderServices : IEmailSender
     {
@@ -22,14 +22,14 @@ namespace DataLayer.Services
             SmtpClient client = new SmtpClient
             {
                 Port = 587,
-                Host = "smtp.gmail.com", 
+                Host = "smtp.gmail.com",
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("your email sender", "password")
+                Credentials = new NetworkCredential("tuanvynguyen51@gmail.com", "15022000Vy")
             };
 
-            return client.SendMailAsync("your email sender", email, subject, htmlMessage);
+            return client.SendMailAsync("tuanvynguyen51@gmail.com", email, subject, htmlMessage);
         }
     }
 }

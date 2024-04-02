@@ -6,7 +6,10 @@ using DataLayer.DTOs.Users;
 using DataLayer.Encryption;
 using DataLayer.Interfaces;
 using DataLayer.Response;
+using Hangfire;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +25,14 @@ namespace DataLayer.Services
         private readonly IPasswordHasher _pwHasher;
         private readonly IJWTHelper _jWTHelper;
         private readonly IMapper _mapper;
-        public AuthenticationServices(AppDbContext context, IPasswordHasher pwhasher, IJWTHelper jWTHelper, IMapper mapper)
+        private readonly IEmailSender _mailSender;
+        public AuthenticationServices(AppDbContext context, IPasswordHasher pwhasher, IJWTHelper jWTHelper, IMapper mapper, IEmailSender mailSender)
         {
             _context = context;
             _pwHasher = pwhasher;
             _jWTHelper = jWTHelper;
             _mapper = mapper;
+            _mailSender = mailSender;
         }
         public async Task<ServiceResponse<CredentialDTO>> LoginAsync(UserLoginDTO userdata)
         {
@@ -63,8 +68,14 @@ namespace DataLayer.Services
             }
             catch
             {
+
                 throw;
             }
+        }
+        public async Task verifyEmailAsync()
+        {
+            //BackgroundJob.Enqueue(() => _mailSender.SendEmailAsync());
+            BackgroundJob.Enqueue(() => _mailSender.SendEmailAsync("tuanvynguyen1@gmail.com","Confirm Your Email", "Confirm"));
         }
     }
 }

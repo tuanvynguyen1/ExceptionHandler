@@ -113,6 +113,26 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RoleDescription = "LÀ admin cuyền lực.",
+                            RoleName = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            RoleDescription = "Là nole tư bản đi tìm kiếm miếng cơm manh áo.",
+                            RoleName = "TimViec"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            RoleDescription = "Là tư bản đi kiếm những con chiêng ngoan đạo.",
+                            RoleName = "PhatViec"
+                        });
                 });
 
             modelBuilder.Entity("Entities.SkillModel", b =>
@@ -177,8 +197,14 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -222,6 +248,40 @@ namespace Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserSkills");
+                });
+
+            modelBuilder.Entity("Entities.UserVerifyModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConfirmationCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Expired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("UserVerify");
                 });
 
             modelBuilder.Entity("Entities.UsersModel", b =>
@@ -383,9 +443,25 @@ namespace Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Entities.UserVerifyModel", b =>
+                {
+                    b.HasOne("Entities.UsersModel", "Users")
+                        .WithMany("UserVerify")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Entities.JobModel", b =>
                 {
                     b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("Entities.UsersModel", b =>
+                {
+                    b.Navigation("UserVerify");
                 });
 #pragma warning restore 612, 618
         }

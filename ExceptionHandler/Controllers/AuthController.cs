@@ -50,5 +50,12 @@ namespace ExceptionHandler.Controllers
                 _ => throw new NotImplementedException()
             };
         }
+        [Route("/verify")]
+        [Produces("application/json")]
+        [HttpPost]
+        public async Task Verify()
+        {
+            await _authService.verifyEmailAsync();
+        }
     }
 }
