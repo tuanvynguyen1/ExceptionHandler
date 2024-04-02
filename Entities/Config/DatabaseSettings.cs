@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Entities.Config
 {
-    public  class DatabaseSettings
+    public class DatabaseSettings
     {
-        public  string ConnectionString { get; set; }
+        public static string ConnectionString { get; set; }
     }
 }

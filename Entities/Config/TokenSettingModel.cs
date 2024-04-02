@@ -8,6 +8,6 @@ namespace Entities.Config
 {
     public class TokenSettingModel
     {
-        public string SecretKey { get; set; }
+        public static string Secret { get; set; }
     }
 }

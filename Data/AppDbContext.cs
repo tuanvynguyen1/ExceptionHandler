@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,17 +25,11 @@ namespace Data
 
             modelBuilder.Entity<UsersModel>().HasIndex(p => p.Email).IsUnique();
             modelBuilder.Entity<UsersModel>().HasIndex(p => p.UserName).IsUnique();
+
             base.OnModelCreating(modelBuilder);
             new DbInitializer(modelBuilder).Seed();
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Data Source=HU-VYNHT-K2;Initial Catalog=WDB;User ID=sa;Password=15022000Vy!;Trusted_Connection=True;MultipleActiveResultSets=true; TrustServerCertificate=True");
-            }
-        }
 
         public virtual DbSet<Entities.UsersModel> Users { get; set; } = default!;
         public virtual DbSet<Entities.JobModel> Jobs { get; set; } = default!;
