@@ -4,6 +4,7 @@ using DataLayer.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Security.Claims;
 using static DataLayer.Response.EServiceResponseTypes;
 
 namespace ExceptionHandler.Controllers
@@ -55,7 +56,8 @@ namespace ExceptionHandler.Controllers
         [HttpPost]
         public async Task Verify()
         {
-            await _authService.verifyEmailAsync();
+            var userid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            await _authService.verifyEmailAsync(userid);
         }
     }
 }

@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLayer.Authentication
+namespace DataLayer.Interfaces
 {
-    public interface IJWTHelper
+    public interface IJwtServices
     {
-        Task<string> GenerateJWT(int id, DateTime expire, UserDTO user);
+        Task InsertJWTToken(JwtDTO jwt);
     }
 }

@@ -76,11 +76,16 @@ builder.Services.AddSwaggerGen(c=>
 });
 var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found."));
+
+//Add Services
 builder.Services.AddSingleton<IPasswordHasher, MD5>();
 builder.Services.AddSingleton<IJWTHelper, JWTHelper>();
 builder.Services.AddTransient<IEmailSender, EmailSenderServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
+builder.Services.AddScoped<IJwtServices, JwtServices>();    
+
+
 
 //Add Hangfire 
 builder.Services.AddHangfire(configuration => configuration
@@ -88,12 +93,11 @@ builder.Services.AddHangfire(configuration => configuration
 
 builder.Services.AddHangfireServer();
 
-builder.Services.AddHangfireServer();
 
 //Automapper
 builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 {
-    options.AddProfile(new MappingProfile(provider.GetService<IPasswordHasher>()));
+    options.AddProfile(new MappingProfile(provider.GetService<IPasswordHasher>() ?? throw new InvalidOperationException("Service Not found!")));
 })
 .CreateMapper());
 var app = builder.Build();

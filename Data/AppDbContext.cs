@@ -1,6 +1,7 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,23 @@ namespace Data
             modelBuilder.Entity<UsersModel>().HasIndex(p => p.Email).IsUnique();
             modelBuilder.Entity<UsersModel>().HasIndex(p => p.UserName).IsUnique();
 
+            modelBuilder.Entity<UsersModel>()
+                    .HasMany(e => e.UserRoles)
+                    .WithOne(e => e.User)
+                    .HasForeignKey("UserId")
+                    .IsRequired();
+            modelBuilder.Entity<RoleModel>()
+                    .HasMany(e => e.UserRoles)
+                    .WithOne(e => e.Role)
+                    .HasForeignKey("RoleId")
+                    .IsRequired();
+            modelBuilder.Entity<UsersModel>()
+                    .HasMany(e => e.Jwts)
+                    .WithOne(e => e.User)
+                    .HasForeignKey("UserId")
+                    .IsRequired();
+
+
             base.OnModelCreating(modelBuilder);
             new DbInitializer(modelBuilder).Seed();
         }
@@ -39,7 +57,7 @@ namespace Data
 
         public virtual DbSet<Entities.RoleModel> Roles { get; set; } = default!;
         public virtual DbSet<Entities.UserRoleModel> UserRoles { get; set; } = default!;
-
+        public virtual DbSet<Entities.JWTModel> JWT { get; set; } = default!; 
         public override int SaveChanges()
         {
             AddTimestamps();

@@ -22,6 +22,37 @@ namespace Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Entities.JWTModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TokenHashValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("JWT");
+                });
+
             modelBuilder.Entity("Entities.JobModel", b =>
                 {
                     b.Property<int>("JobId")
@@ -250,40 +281,6 @@ namespace Data.Migrations
                     b.ToTable("UserSkills");
                 });
 
-            modelBuilder.Entity("Entities.UserVerifyModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Action")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConfirmationCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Expired")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("UserVerify");
-                });
-
             modelBuilder.Entity("Entities.UsersModel", b =>
                 {
                     b.Property<int>("Id")
@@ -386,6 +383,17 @@ namespace Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Entities.JWTModel", b =>
+                {
+                    b.HasOne("Entities.UsersModel", "Users")
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Entities.JobSkillModel", b =>
                 {
                     b.HasOne("Entities.JobModel", "Job")
@@ -408,13 +416,13 @@ namespace Data.Migrations
             modelBuilder.Entity("Entities.UserRoleModel", b =>
                 {
                     b.HasOne("Entities.RoleModel", "Role")
-                        .WithMany()
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Entities.UsersModel", "User")
-                        .WithMany()
+                        .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -443,25 +451,19 @@ namespace Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Entities.UserVerifyModel", b =>
-                {
-                    b.HasOne("Entities.UsersModel", "Users")
-                        .WithMany("UserVerify")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("Entities.JobModel", b =>
                 {
                     b.Navigation("Skill");
                 });
 
+            modelBuilder.Entity("Entities.RoleModel", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("Entities.UsersModel", b =>
                 {
-                    b.Navigation("UserVerify");
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

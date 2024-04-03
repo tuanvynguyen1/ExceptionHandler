@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240327085812_addUserSkills")]
-    partial class addUserSkills
+    [Migration("20240403035038_all")]
+    partial class all
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,37 @@ namespace Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Entities.JWTModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TokenHashValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("JWT");
+                });
+
             modelBuilder.Entity("Entities.JobModel", b =>
                 {
                     b.Property<int>("JobId")
@@ -32,6 +63,9 @@ namespace Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpiredDate")
                         .HasColumnType("datetime2");
@@ -48,6 +82,9 @@ namespace Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("JobId");
 
                     b.ToTable("Jobs");
@@ -61,11 +98,17 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("JobId")
                         .HasColumnType("int");
 
                     b.Property<int>("SkillId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<byte>("YearOfExperience")
                         .HasColumnType("tinyint");
@@ -79,6 +122,53 @@ namespace Data.Migrations
                     b.ToTable("JobSkillModel");
                 });
 
+            modelBuilder.Entity("Entities.RoleModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RoleDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            RoleDescription = "LÀ admin cuyền lực.",
+                            RoleName = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            RoleDescription = "Là nole tư bản đi tìm kiếm miếng cơm manh áo.",
+                            RoleName = "TimViec"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            RoleDescription = "Là tư bản đi kiếm những con chiêng ngoan đạo.",
+                            RoleName = "PhatViec"
+                        });
+                });
+
             modelBuilder.Entity("Entities.SkillModel", b =>
                 {
                     b.Property<int>("SkillId")
@@ -86,6 +176,9 @@ namespace Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("SkillDescription")
                         .IsRequired()
@@ -95,6 +188,9 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("SkillId");
 
@@ -127,6 +223,35 @@ namespace Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Entities.UserRoleModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRoles");
+                });
+
             modelBuilder.Entity("Entities.UserSkillModel", b =>
                 {
                     b.Property<int>("Id")
@@ -135,8 +260,14 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("SkillId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -164,6 +295,9 @@ namespace Data.Migrations
                     b.Property<string>("Avatar")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(70)
@@ -173,6 +307,9 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsEmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -189,12 +326,24 @@ namespace Data.Migrations
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
                     b.ToTable("Users");
 
@@ -204,31 +353,48 @@ namespace Data.Migrations
                             Id = 1,
                             Email = "fszymanowski0@com.com",
                             FirstName = "Fawnia",
+                            IsEmailConfirmed = false,
                             LastName = "Szymanowski",
                             Password = "74a14ea74c47ecdf30f940974dc9dc20",
                             PhoneNumber = "0335487991",
-                            UserName = "fszymanowski0"
+                            UserName = "fszymanowski0",
+                            isDeleted = false
                         },
                         new
                         {
                             Id = 2,
                             Email = "apeacocke1@google.ca",
                             FirstName = "Fawnia",
+                            IsEmailConfirmed = false,
                             LastName = "Alexandros",
                             Password = "c52c635d98738ff357b13d9e4368aff6",
                             PhoneNumber = "0354579415",
-                            UserName = "apeacocke1"
+                            UserName = "apeacocke1",
+                            isDeleted = false
                         },
                         new
                         {
                             Id = 3,
                             Email = "cpancoast2@wsj.com",
                             FirstName = "Cazzie",
+                            IsEmailConfirmed = false,
                             LastName = "Pancoast",
                             Password = "7f45928bce3ba52d77dee0cf1a8bbfdf",
                             PhoneNumber = "0354596415",
-                            UserName = "cpancoast2"
+                            UserName = "cpancoast2",
+                            isDeleted = false
                         });
+                });
+
+            modelBuilder.Entity("Entities.JWTModel", b =>
+                {
+                    b.HasOne("Entities.UsersModel", "Users")
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Entities.JobSkillModel", b =>
@@ -248,6 +414,25 @@ namespace Data.Migrations
                     b.Navigation("Job");
 
                     b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("Entities.UserRoleModel", b =>
+                {
+                    b.HasOne("Entities.RoleModel", "Role")
+                        .WithMany("UserRoleModels")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entities.UsersModel", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Entities.UserSkillModel", b =>
@@ -272,6 +457,16 @@ namespace Data.Migrations
             modelBuilder.Entity("Entities.JobModel", b =>
                 {
                     b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("Entities.RoleModel", b =>
+                {
+                    b.Navigation("UserRoleModels");
+                });
+
+            modelBuilder.Entity("Entities.UsersModel", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

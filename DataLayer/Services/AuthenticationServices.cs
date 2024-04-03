@@ -6,6 +6,7 @@ using DataLayer.DTOs.Users;
 using DataLayer.Encryption;
 using DataLayer.Interfaces;
 using DataLayer.Response;
+using Entities;
 using Hangfire;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -26,27 +27,40 @@ namespace DataLayer.Services
         private readonly IJWTHelper _jWTHelper;
         private readonly IMapper _mapper;
         private readonly IEmailSender _mailSender;
-        public AuthenticationServices(AppDbContext context, IPasswordHasher pwhasher, IJWTHelper jWTHelper, IMapper mapper, IEmailSender mailSender)
+        private readonly IJwtServices _jwtServices;
+        public AuthenticationServices(AppDbContext context, IPasswordHasher pwhasher, IJWTHelper jWTHelper, IMapper mapper, IEmailSender mailSender, IJwtServices jwtServices)
         {
             _context = context;
             _pwHasher = pwhasher;
             _jWTHelper = jWTHelper;
             _mapper = mapper;
             _mailSender = mailSender;
+            _jwtServices = jwtServices;
         }
         public async Task<ServiceResponse<CredentialDTO>> LoginAsync(UserLoginDTO userdata)
         {
             var serviceResponse = new ServiceResponse<CredentialDTO>();
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == userdata.UserName);
+                var user = await _context.Users.Where(x => x.UserName == userdata.UserName).Include(x => x.UserRoles).ThenInclude(x => x.Role).FirstOrDefaultAsync();
+
                 if (user != null)
                 {
                     var checkCredential = _pwHasher.verify(userdata.Password, user.Password);
                     if (checkCredential)
                     {
-                        string token = _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMinutes(10));
-                        string refreshToken = _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMonths(6));
+                        var userDTO = _mapper.Map<UsersModel,UserDTO>(user);
+                        string? token = await _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMinutes(10), userDTO);
+                        string? refreshToken = await _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMonths(6), userDTO);
+
+
+                        await _jwtServices.InsertJWTToken(new JwtDTO()
+                        {
+                            User = user,
+                            ExpiredDate = DateTime.UtcNow.AddMonths(6),
+                            Token = refreshToken,
+                        });
+
                         serviceResponse.Data = _mapper.Map<CredentialDTO>(user);
                         serviceResponse.Data.RefreshToken = refreshToken;
                         serviceResponse.Data.Token = token;
@@ -72,10 +86,15 @@ namespace DataLayer.Services
                 throw;
             }
         }
-        public async Task verifyEmailAsync()
+        public async Task verifyEmailAsync(string userid)
         {
             //BackgroundJob.Enqueue(() => _mailSender.SendEmailAsync());
-            BackgroundJob.Enqueue(() => _mailSender.SendEmailAsync("tuanvynguyen1@gmail.com","Confirm Your Email", "Confirm"));
+            var u = await _context.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(userid));
+            if (u == null || u.IsEmailConfirmed == true)
+            {
+                return;
+            }
+            BackgroundJob.Enqueue(() => _mailSender.SendEmailAsync(u.Email,"Confirm Your Email", "Confirm"));
         }
     }
 }

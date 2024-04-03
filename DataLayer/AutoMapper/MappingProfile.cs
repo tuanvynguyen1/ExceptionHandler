@@ -19,10 +19,12 @@ namespace DataLayer.AutoMapper
             _pwdHasher = pwdHasher;
 
             CreateMap<UserRegisterDTO, UsersModel>().ForMember(dest=>dest.Password, opt => opt.MapFrom(scr => _pwdHasher.Hash(scr.Password)));
-            CreateMap<UsersModel, UserDTO>();
+            CreateMap<UsersModel, UserDTO>()
+                 .ForMember(dto => dto.Roles, opt => opt.MapFrom(x => x.UserRoles.Select(y => y.Role).ToList()));
+            CreateMap<JwtDTO, JWTModel>().ForMember(dest => dest.TokenHashValue, opt => opt.MapFrom(src => _pwdHasher.Hash(src.Token)));
             //Reverse can map from 1->2 || 2->1
             CreateMap<UsersModel, UserInfoDTO>().ReverseMap(); 
-            CreateMap<UsersModel, CredentialDTO>().ReverseMap();
+            CreateMap<UsersModel, CredentialDTO>().ForMember(dto => dto.Roles, opt => opt.MapFrom(x => x.UserRoles.Select(y => y.Role).ToList())).ReverseMap();
 
         }
     }

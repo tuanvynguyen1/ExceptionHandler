@@ -28,6 +28,12 @@ namespace DataLayer.Services
             _mapper = mapper;
         }
 
+        public async Task<UserDTO?> GetUserByIdAsync(int id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<UserDTO>(user); 
+        }
+
         public async Task<ServiceResponse<UserInfoDTO>> GetUserInfoAsync(string? id)
         {
             var serviceResponse = new ServiceResponse<UserInfoDTO>();

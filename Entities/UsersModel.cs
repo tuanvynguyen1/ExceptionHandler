@@ -60,7 +60,11 @@ namespace Entities
 
         [JsonIgnore, Required]
         public bool isDeleted { get; set; } = false;
+        [JsonIgnore]
+        public virtual ICollection<UserRoleModel> UserRoles { get; set; }
 
+        [JsonIgnore]
+        public virtual ICollection<JWTModel> Jwts { get; set; }
 
 
     }

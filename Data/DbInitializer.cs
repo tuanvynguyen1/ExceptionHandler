@@ -97,7 +97,7 @@ namespace Data
                     RoleName = "PhatViec",
                     RoleDescription = "Là tư bản đi kiếm những con chiêng ngoan đạo."
                 }
-                );
+               );
         }
     }
 }

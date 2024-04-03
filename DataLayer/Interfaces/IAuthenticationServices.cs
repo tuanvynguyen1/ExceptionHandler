@@ -12,7 +12,7 @@ namespace DataLayer.Interfaces
     public interface IAuthenticationServices
     {
         Task<ServiceResponse<CredentialDTO>> LoginAsync(UserLoginDTO userdata);
-        Task verifyEmailAsync();
+        Task verifyEmailAsync(string userid);
 
     }
 }
