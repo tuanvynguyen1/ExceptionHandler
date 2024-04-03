@@ -12,10 +12,7 @@ namespace DataLayer.Email
 {
     public class EmailSenderServices : IEmailSender
     {
-        public void sendConfirmEmail(string email)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
