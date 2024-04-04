@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Email\Templates\**" />
+    <EmbeddedResource Remove="Email\Templates\**" />
+    <None Remove="Email\Templates\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Hangfire.Core" Version="1.8.11" />
@@ -26,10 +32,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
     <ProjectReference Include="..\Entities\Entities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Email\Templates\" />
   </ItemGroup>
 
 </Project>

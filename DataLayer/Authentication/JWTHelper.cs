@@ -45,7 +45,7 @@ namespace DataLayer.Authentication
             );
             return tokenHandler.WriteToken(token);
         }
-        public async Task<string> GenerateJWTRefreshToken(int id, DateTime expire, UserDTO user)
+        public async Task<string> GenerateJWTRefreshToken(int id, DateTime expire)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -82,6 +82,24 @@ namespace DataLayer.Authentication
             {
                 return new ClaimsPrincipal();
             }
+        }
+
+        public async Task<string> GenerateJWTMailAction(int id, DateTime expire, string action)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var key = Encoding.ASCII.GetBytes(_tokenSetting.Secret);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                new Claim("action", action)
+            };
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: expire,
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            );
+            return tokenHandler.WriteToken(token);
         }
     }
 }

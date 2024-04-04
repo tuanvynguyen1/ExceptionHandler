@@ -52,7 +52,7 @@ namespace DataLayer.Services
                     {
                         var userDTO = _mapper.Map<UsersModel,UserDTO>(user);
                         string? token = await _jWTHelper.GenerateJWTToken(user.Id, DateTime.UtcNow.AddMinutes(10), userDTO);
-                        string? refreshToken = await _jWTHelper.GenerateJWTRefreshToken(user.Id, DateTime.UtcNow.AddMonths(6), userDTO);
+                        string? refreshToken = await _jWTHelper.GenerateJWTRefreshToken(user.Id, DateTime.UtcNow.AddMonths(6));
 
 
                         await _jwtServices.InsertJWTToken(new JwtDTO()
@@ -95,7 +95,9 @@ namespace DataLayer.Services
             {
                 return;
             }
-            BackgroundJob.Enqueue(() => _mailSender.SendEmailAsync(u.Email,"Confirm Your Email", "Confirm"));
+            var token = await _jWTHelper.GenerateJWTMailAction(u.Id, DateTime.UtcNow.AddDays(1), "confirm");
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(token);
+            BackgroundJob.Enqueue(() => _mailSender.SendEmailAsync(u.Email,"Confirm Your Email", System.Convert.ToBase64String(plainTextBytes)));
         }
         public async Task<ServiceResponse<TokenDTO>> refreshTokenAsync(string reftoken)
         {

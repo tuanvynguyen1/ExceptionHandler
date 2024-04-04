@@ -58,6 +58,12 @@ namespace DataLayer.Services
             try
             {
                 var toAdd = _mapper.Map<UsersModel>(user);
+                var role = await _context.Roles.FirstAsync(x => x.RoleName == "TimViec");
+                await _context.UserRoles.AddAsync(new UserRoleModel()
+                {
+                    Role = role,
+                    User = toAdd
+                });
                 await _context.Users!.AddAsync(toAdd);
                 await _context.SaveChangesAsync();
                 serviceResponse.Data = _mapper.Map<UserDTO>(toAdd);

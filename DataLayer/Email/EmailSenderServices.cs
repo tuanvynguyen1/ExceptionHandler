@@ -49,7 +49,7 @@ namespace DataLayer.Email
         //    //return client.SendMailAsync("temp@wpoven.com", email, subject, htmlMessage);
         //    return client.SendMailAsync(mm);
         //}
-        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public async Task SendEmailAsync(string email, string subject, string token)
         {
 
             try
@@ -67,7 +67,7 @@ namespace DataLayer.Email
                     string filePath = Directory.GetCurrentDirectory() + "\\Email\\Templates\\Verified.html";
                     string emailTemplateText = File.ReadAllText(filePath);
 
-                    emailTemplateText = string.Format(emailTemplateText, email, DateTime.Today.Date.ToShortDateString());
+                    emailTemplateText = string.Format(emailTemplateText, email, "/verify/"+token);
 
                     BodyBuilder emailBodyBuilder = new BodyBuilder();
                     emailBodyBuilder.HtmlBody = emailTemplateText;
