@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DataLayer.DTOs.Authentication;
+using DataLayer.DTOs.Role;
 using DataLayer.DTOs.Users;
 using DataLayer.Encryption;
 using Entities;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +27,7 @@ namespace DataLayer.AutoMapper
             //Reverse can map from 1->2 || 2->1
             CreateMap<UsersModel, UserInfoDTO>().ReverseMap(); 
             CreateMap<UsersModel, CredentialDTO>().ForMember(dto => dto.Roles, opt => opt.MapFrom(x => x.UserRoles.Select(y => y.Role).ToList())).ReverseMap();
-
+            CreateMap<RoleModel, RolesDTO>().ReverseMap();
         }
     }
 }

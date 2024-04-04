@@ -12,6 +12,8 @@ namespace Entities
         public int Id { get; set; }
         public string RoleName { get; set; }
         public string RoleDescription { get; set; } = string.Empty;
+
+        public byte RoleAccessLevel {  get; set; } 
         [JsonIgnore]
         public virtual ICollection<UserRoleModel> UserRoles { get; set; }
 

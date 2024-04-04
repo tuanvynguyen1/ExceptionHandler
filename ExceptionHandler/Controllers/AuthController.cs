@@ -5,6 +5,7 @@ using DataLayer.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Net;
 using System.Security.Claims;
 using static DataLayer.Response.EServiceResponseTypes;
 
@@ -47,7 +48,7 @@ namespace ExceptionHandler.Controllers
             var serviceResponse = await _authService.LoginAsync(userdata);
             return serviceResponse.ResponseType switch
             {
-                EResponseType.Success => CreatedAtAction(nameof(Register), new { version = "1" }, serviceResponse.Data),
+                EResponseType.Success => CreatedAtAction(nameof(Login), new { version = "1" }, serviceResponse.Data),
                 EResponseType.Unauthorized => BadRequest(serviceResponse.Message),
                 EResponseType.BadRequest => BadRequest(serviceResponse.Message),    
                 _ => throw new NotImplementedException()
@@ -61,6 +62,22 @@ namespace ExceptionHandler.Controllers
         {
             var userid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             await _authService.verifyEmailAsync(userid);
+        }
+
+        [Route("/verify/{token}")]
+        [Produces("application/json")]
+        [HttpGet]
+        public async Task<ActionResult> VerifyLink(string token)
+        {
+            var decode = WebUtility.UrlDecode(token);
+            var serviceResponse = await _authService.activeEmailAsync(decode);
+            return serviceResponse.ResponseType switch
+            {
+                EResponseType.Success => Ok(serviceResponse.Message),
+                EResponseType.Unauthorized => BadRequest(serviceResponse.Message),
+                EResponseType.BadRequest => BadRequest(serviceResponse.Message),
+                _ => throw new NotImplementedException()
+            };
         }
         [Route("/refresh")]
         [Produces("application/json")]

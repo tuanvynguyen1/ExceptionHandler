@@ -83,18 +83,21 @@ namespace Data
                 {
                     Id = 1,
                     RoleName = "Admin",
+                    RoleAccessLevel = 5,
                     RoleDescription = "LÀ admin cuyền lực."
                 },
                 new RoleModel()
                 {
                     Id = 2,
                     RoleName = "TimViec",
+                    RoleAccessLevel = 1,
                     RoleDescription = "Là nole tư bản đi tìm kiếm miếng cơm manh áo."
                 },
                 new RoleModel()
                 {
                     Id = 3,
                     RoleName = "PhatViec",
+                    RoleAccessLevel = 1,
                     RoleDescription = "Là tư bản đi kiếm những con chiêng ngoan đạo."
                 }
                );

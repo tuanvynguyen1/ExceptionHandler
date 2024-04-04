@@ -49,7 +49,7 @@ namespace Entities
 
 
         [Required]
-        [RegularExpression("(84|0[3|5|7|8|9])+([0-9]{8})", ErrorMessage = "Phone number is not valid format!")]
+        [RegularExpression("([84|0])([3|5|7|8|9])+([0-9]{8})", ErrorMessage = "Phone number is not valid format!")]
         [StringLength(11, MinimumLength = 9)]
         public string PhoneNumber { get; set; }
 

@@ -22,34 +22,7 @@ namespace DataLayer.Email
         {
             _mailSettings = mailSettings.Value;
         }
-
-        //public Task SendEmailAsync(string email, string subject, string htmlMessage)
-        //{
-            
-        //    SmtpClient client = new SmtpClient
-        //    {
-        //        Port = _mailSettings.port,
-        //        Host = _mailSettings.server,
-        //        EnableSsl = true,
-                
-        //        DeliveryMethod = SmtpDeliveryMethod.Network,
-        //        UseDefaultCredentials = false,
-        //        Credentials = new NetworkCredential(_mailSettings.username, _mailSettings.password)
-        //    };
-        //    string filePath = Directory.GetCurrentDirectory() + "\\Email\\Templates\\Verified.html";
-        //    string emailTemplateText = File.ReadAllText(filePath);
-        //    emailTemplateText = string.Format(emailTemplateText, email, DateTime.Today.Date.ToShortDateString());
-        //    var mm = new MailMessage();
-        //    mm.Subject = subject;
-        //    mm.Body = htmlMessage; 
-        //    mm.IsBodyHtml = true;
-        //    mm.To.Add(new MailboxAddress("ConJob", email));
-        //    mm.From = _mailSettings.senderemail;
-            
-        //    //return client.SendMailAsync("temp@wpoven.com", email, subject, htmlMessage);
-        //    return client.SendMailAsync(mm);
-        //}
-        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public async Task SendEmailAsync(string email, string subject, string html)
         {
 
             try
@@ -63,14 +36,8 @@ namespace DataLayer.Email
                     emailMessage.To.Add(emailTo);
 
                     emailMessage.Subject = "Hello";
-
-                    string filePath = Directory.GetCurrentDirectory() + "\\Email\\Templates\\Verified.html";
-                    string emailTemplateText = File.ReadAllText(filePath);
-
-                    emailTemplateText = string.Format(emailTemplateText, email, DateTime.Today.Date.ToShortDateString());
-
                     BodyBuilder emailBodyBuilder = new BodyBuilder();
-                    emailBodyBuilder.HtmlBody = emailTemplateText;
+                    emailBodyBuilder.HtmlBody = html;
                     emailBodyBuilder.TextBody = "Plain Text goes here to avoid marked as spam for some email servers.";
 
                     emailMessage.Body = emailBodyBuilder.ToMessageBody();

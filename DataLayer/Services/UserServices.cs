@@ -12,6 +12,9 @@ using Entities;
 using Microsoft.EntityFrameworkCore;
 using static DataLayer.Response.EServiceResponseTypes;
 using DataLayer.Response;
+using DataLayer.DTOs.Role;
+using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataLayer.Services
 {
@@ -58,6 +61,12 @@ namespace DataLayer.Services
             try
             {
                 var toAdd = _mapper.Map<UsersModel>(user);
+                var role = await _context.Roles.FirstAsync(x => x.RoleName == "TimViec");
+                await _context.UserRoles.AddAsync(new UserRoleModel()
+                {
+                    Role = role,
+                    User = toAdd
+                });
                 await _context.Users!.AddAsync(toAdd);
                 await _context.SaveChangesAsync();
                 serviceResponse.Data = _mapper.Map<UserDTO>(toAdd);
@@ -68,6 +77,38 @@ namespace DataLayer.Services
                 serviceResponse.Message = "Username/Email already taken by another User. Please reset or choose different.";
             }
             catch { throw; }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<UserDTO>> SelectRole(SelectRoleDTO Role, string? userid)
+        {
+            RoleModel selectedRole = await _context.Roles.Where(x=>x.RoleAccessLevel == 1).FirstOrDefaultAsync(x => x.RoleName == Role.RoleName);
+            var serviceResponse = new ServiceResponse<UserDTO>();
+
+            try
+            {
+                var userModel = await _context.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(userid));
+                if (await _context.UserRoles.Where(x => x.User == userModel  ).Where(x=>x.Role == selectedRole).FirstOrDefaultAsync() != null)
+                {
+                    serviceResponse.ResponseType = EResponseType.CannotUpdate;
+                    serviceResponse.Message = "You have this role already.";
+                }
+                else
+                {
+                    await _context.UserRoles.AddAsync(new UserRoleModel()
+                    {
+                        Role = selectedRole,
+                        User = userModel
+                    });
+                    await _context.SaveChangesAsync();
+                    serviceResponse.Data = _mapper.Map<UserDTO>(userModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.ResponseType = EResponseType.CannotUpdate;
+                serviceResponse.Message = "Something wrong.";
+            }
             return serviceResponse;
         }
 

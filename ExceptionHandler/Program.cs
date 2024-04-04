@@ -85,6 +85,7 @@ var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found."));
 
 //Add Services
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IPasswordHasher, Bcrypt>();
 builder.Services.AddSingleton<IJWTHelper, JWTHelper>();
 builder.Services.AddTransient<IEmailSender, EmailSenderServices>();
@@ -92,6 +93,8 @@ builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
 builder.Services.AddScoped<IJwtServices, JwtServices>();
 builder.Services.AddScoped<IAuthorizationHandler, EmailVerifiedHandler>();
+builder.Services.AddTransient<IEmailServices, EmailServices>();
+builder.Services.AddScoped<IRoleServices, RoleServices>(); 
 
 builder.Services.AddAuthorization(options =>
 {

@@ -10,10 +10,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using NuGet.Common;
 using System.Security.Claims;
+using System.Net.Sockets;
+using DataLayer.DTOs.Role;
 namespace ExceptionHandler.Controllers
 {
     [ApiController]
-    [Authorize(Policy = "emailverified", Roles ="Admin")]
+    [Authorize(Policy = "emailverified")]
     public class UserController : ControllerBase
     {
         private readonly Microsoft.Extensions.Logging.ILogger _logger;
@@ -44,7 +46,6 @@ namespace ExceptionHandler.Controllers
         }
         [Route("/me")]
         [Produces("application/json")]
-        [Authorize(Policy = "emailverified")]
         [HttpGet]
         public async Task<ActionResult> get()
         {
@@ -57,6 +58,25 @@ namespace ExceptionHandler.Controllers
                 EResponseType.Forbid => Forbid(serviceResponse.Message),
                 _ => throw new NotImplementedException()
             };
+        }
+
+        [Route("/selectRole")]
+        [Produces("application/json")]
+        [HttpPost]
+        public async Task<ActionResult> setRole(SelectRoleDTO role)
+        {
+
+            var userid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var serviceResponse = await _userServices.SelectRole(role, userid);
+            return serviceResponse.ResponseType switch
+            {
+                EResponseType.Success => Ok(serviceResponse.Data),
+                EResponseType.CannotUpdate => BadRequest(serviceResponse.Message),
+                EResponseType.Forbid => Forbid(serviceResponse.Message),
+                _ => throw new NotImplementedException()
+            };
+
         }
     }
 }
