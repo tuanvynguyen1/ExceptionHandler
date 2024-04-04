@@ -13,6 +13,6 @@ namespace DataLayer.Interfaces
     {
         Task<ServiceResponse<CredentialDTO>> LoginAsync(UserLoginDTO userdata);
         Task verifyEmailAsync(string userid);
-
+        Task<ServiceResponse<TokenDTO>> refreshTokenAsync(string reftoken);
     }
 }

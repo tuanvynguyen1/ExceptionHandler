@@ -7,9 +7,12 @@ using DataLayer.Encryption;
 using DataLayer.Interfaces;
 using DataLayer.Services;
 using Entities.Config;
+using ExceptionHandler.Policy;
+using ExceptionHandler.Policy.Requirement;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -25,6 +28,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found.")));
 builder.Services.AddControllers();
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("ConnectionStrings"));
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("AppSettings"));
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -78,15 +85,18 @@ var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext") ?? throw new InvalidOperationException("Connection string 'AppDbContext' not found."));
 
 //Add Services
-builder.Services.AddSingleton<IPasswordHasher, MD5>();
+builder.Services.AddSingleton<IPasswordHasher, Bcrypt>();
 builder.Services.AddSingleton<IJWTHelper, JWTHelper>();
 builder.Services.AddTransient<IEmailSender, EmailSenderServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IAuthenticationServices, AuthenticationServices>();
-builder.Services.AddScoped<IJwtServices, JwtServices>();    
+builder.Services.AddScoped<IJwtServices, JwtServices>();
+builder.Services.AddScoped<IAuthorizationHandler, EmailVerifiedHandler>();
 
-
-
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("emailverified", policy => policy.Requirements.Add(new EmailVerifiedRequirement()));
+});
 //Add Hangfire 
 builder.Services.AddHangfire(configuration => configuration
                     .UseSqlServerStorage(builder.Configuration.GetConnectionString("AppDbContext")));

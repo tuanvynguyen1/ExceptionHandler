@@ -1,4 +1,5 @@
-﻿using DataLayer.DTOs.Users;
+﻿using DataLayer.DTOs.Authentication;
+using DataLayer.DTOs.Users;
 using DataLayer.Interfaces;
 using DataLayer.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -40,6 +41,7 @@ namespace ExceptionHandler.Controllers
         [Route("/login")]
         [Produces("application/json")]
         [HttpPost]
+        
         public async Task<ActionResult> Login(UserLoginDTO userdata)
         {
             var serviceResponse = await _authService.LoginAsync(userdata);
@@ -54,10 +56,25 @@ namespace ExceptionHandler.Controllers
         [Route("/verify")]
         [Produces("application/json")]
         [HttpPost]
+        [Authorize]
         public async Task Verify()
         {
             var userid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             await _authService.verifyEmailAsync(userid);
+        }
+        [Route("/refresh")]
+        [Produces("application/json")]
+        [HttpPost]
+        public async Task<ActionResult> refreshToken(TokenDTO token)
+        {
+            var serviceResponse = await _authService.refreshTokenAsync(token.Token);
+            return serviceResponse.ResponseType switch
+            {
+                EResponseType.Success => CreatedAtAction(nameof(refreshToken), new { version = "1" }, serviceResponse.Data),
+                EResponseType.Unauthorized => BadRequest(serviceResponse.Message),
+                EResponseType.BadRequest => BadRequest(serviceResponse.Message),
+                _ => throw new NotImplementedException()
+            };
         }
     }
 }

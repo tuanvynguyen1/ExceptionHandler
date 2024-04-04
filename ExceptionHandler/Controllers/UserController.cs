@@ -13,7 +13,7 @@ using System.Security.Claims;
 namespace ExceptionHandler.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "User")]
+    [Authorize(Policy = "emailverified", Roles ="Admin")]
     public class UserController : ControllerBase
     {
         private readonly Microsoft.Extensions.Logging.ILogger _logger;
@@ -44,6 +44,7 @@ namespace ExceptionHandler.Controllers
         }
         [Route("/me")]
         [Produces("application/json")]
+        [Authorize(Policy = "emailverified")]
         [HttpGet]
         public async Task<ActionResult> get()
         {

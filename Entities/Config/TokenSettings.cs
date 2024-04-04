@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Entities.Config
 {
-    public class TokenSettingModel
+    public class TokenSettings
     {
-        public static string Secret { get; set; }
+        public string Secret { get; set; }
     }
 }

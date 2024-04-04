@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using static DataLayer.Response.EServiceResponseTypes;
@@ -50,8 +51,8 @@ namespace DataLayer.Services
                     if (checkCredential)
                     {
                         var userDTO = _mapper.Map<UsersModel,UserDTO>(user);
-                        string? token = await _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMinutes(10), userDTO);
-                        string? refreshToken = await _jWTHelper.GenerateJWT(user.Id, DateTime.UtcNow.AddMonths(6), userDTO);
+                        string? token = await _jWTHelper.GenerateJWTToken(user.Id, DateTime.UtcNow.AddMinutes(10), userDTO);
+                        string? refreshToken = await _jWTHelper.GenerateJWTRefreshToken(user.Id, DateTime.UtcNow.AddMonths(6), userDTO);
 
 
                         await _jwtServices.InsertJWTToken(new JwtDTO()
@@ -95,6 +96,51 @@ namespace DataLayer.Services
                 return;
             }
             BackgroundJob.Enqueue(() => _mailSender.SendEmailAsync(u.Email,"Confirm Your Email", "Confirm"));
+        }
+        public async Task<ServiceResponse<TokenDTO>> refreshTokenAsync(string reftoken)
+        {
+            var serviceResponse = new ServiceResponse<TokenDTO>();
+
+            var claim = _jWTHelper.ValidateToken(reftoken);
+
+            if (claim.HasClaim(claim => claim.Type == ClaimTypes.NameIdentifier))
+            {
+                var userid = claim.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == int.Parse(userid));
+                if (user == null)
+                {
+                    serviceResponse.ResponseType = EResponseType.Unauthorized;
+                    serviceResponse.Message = "Could not found User from token.";
+                }
+                else
+                {
+
+                    var userDTO = _mapper.Map<UsersModel, UserDTO>(user);
+
+                    string? token = await _jWTHelper.GenerateJWTToken(user.Id, DateTime.UtcNow.AddMinutes(10), userDTO);
+
+                    if (token == null)
+                    {
+                        serviceResponse.ResponseType = EResponseType.Unauthorized;
+                        serviceResponse.Message = "Could not found User from token.";
+                    }
+                    else
+                    {
+                        TokenDTO _tokendto = new TokenDTO();
+                        _tokendto.Token = token;
+                        serviceResponse.Data = _tokendto;
+                    }
+                    
+                }
+            }
+            else
+            {
+                serviceResponse.ResponseType = EResponseType.Unauthorized;
+                serviceResponse.Message = "Could not found User from token.";
+            }
+            return serviceResponse;
+
         }
     }
 }

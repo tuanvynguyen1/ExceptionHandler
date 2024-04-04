@@ -1,33 +1,96 @@
 ﻿using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
+using MimeKit;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using System.Runtime;
+using Org.BouncyCastle.Asn1.Pkcs;
+using MailKit.Net.Smtp;
 
 namespace DataLayer.Email
 {
     public class EmailSenderServices : IEmailSender
     {
+        private readonly MailSettings _mailSettings;
 
-
-        public Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public EmailSenderServices(IOptions<MailSettings> mailSettings)
         {
-            SmtpClient client = new SmtpClient
-            {
-                Port = 25,
-                Host = "smtp.freesmtpservers.com",
-                //EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                //Credentials = new NetworkCredential("Username", "Password")
-            };
-
-            //return client.SendMailAsync("temp@wpoven.com", email, subject, htmlMessage);
-            return client.SendMailAsync("temp@wpoven.com", email, subject, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional //EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:v=\"urn:schemas-microsoft-com:vml\" lang=\"en\">\r\n  \r\n  <head><link rel=\"stylesheet\" type=\"text/css\" hs-webfonts=\"true\" href=\"https://fonts.googleapis.com/css?family=Lato|Lato:i,b,bi\">\r\n    <title>Email template</title>\r\n    <meta property=\"og:title\" content=\"Email template\">\r\n    \r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\r\n\r\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n\r\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    \r\n    <style type=\"text/css\">\r\n   \r\n      a{ \r\n        text-decoration: underline;\r\n        color: inherit;\r\n        font-weight: bold;\r\n        color: #253342;\r\n      }\r\n      \r\n      h1 {\r\n        font-size: 56px;\r\n      }\r\n      \r\n        h2{\r\n        font-size: 28px;\r\n        font-weight: 900; \r\n      }\r\n      \r\n      p {\r\n        font-weight: 100;\r\n      }\r\n      \r\n      td {\r\n    vertical-align: top;\r\n      }\r\n      \r\n      #email {\r\n        margin: auto;\r\n        width: 600px;\r\n        background-color: white;\r\n      }\r\n      \r\n      button{\r\n        font: inherit;\r\n        background-color: #FF7A59;\r\n        border: none;\r\n        padding: 10px;\r\n        text-transform: uppercase;\r\n        letter-spacing: 2px;\r\n        font-weight: 900; \r\n        color: white;\r\n        border-radius: 5px; \r\n        box-shadow: 3px 3px #d94c53;\r\n      }\r\n      \r\n      .subtle-link {\r\n        font-size: 9px; \r\n        text-transform:uppercase; \r\n        letter-spacing: 1px;\r\n        color: #CBD6E2;\r\n      }\r\n      \r\n    </style>\r\n    \r\n  </head>\r\n    \r\n    <body bgcolor=\"#F5F8FA\" style=\"width: 100%; margin: auto 0; padding:0; font-family:Lato, sans-serif; font-size:18px; color:#33475B; word-break:break-word\">\r\n  \r\n <! View in Browser Link --> \r\n      \r\n<div id=\"email\">\r\n      <table align=\"right\" role=\"presentation\">\r\n        <tr>\r\n          <td>\r\n          <a class=\"subtle-link\" href=\"#\">View in Browser</a>\r\n          </td>\r\n          <tr>\r\n      </table>\r\n  \r\n  \r\n  <! Banner --> \r\n         <table role=\"presentation\" width=\"100%\">\r\n            <tr>\r\n         \r\n              <td bgcolor=\"#00A4BD\" align=\"center\" style=\"color: white;\">\r\n            \r\n             <img alt=\"Flower\" src=\"https://hs-8886753.f.hubspotemail.net/hs/hsstatic/TemplateAssets/static-1.60/img/hs_default_template_images/email_dnd_template_images/ThankYou-Flower.png\" width=\"400px\" align=\"middle\">\r\n                \r\n                <h1> Welcome! </h1>\r\n                \r\n              </td>\r\n        </table>\r\n  \r\n  \r\n  \r\n  \r\n    <! First Row --> \r\n  \r\n  <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"10px\" style=\"padding: 30px 30px 30px 60px;\">\r\n     <tr>\r\n       <td>\r\n        <h2> Lorem ipsum dolor sit amet</h2>\r\n            <p>\r\n              Ut eget semper libero. Vestibulum non maximus nisl, ut iaculis ante. Nunc arcu elit, cursus eget urna et, tempus aliquam eros. Ut eget semper libero. Vestibulum non maximus nisl, ut iaculis ante. Nunc arcu elit, cursus eget urna et, tempus aliquam eros.  \r\n            </p>\r\n                <button> \r\n                  Hí anh em\r\n                </button>\r\n          </td> \r\n          </tr>\r\n                 </table>\r\n  \r\n  <! Second Row with Two Columns--> \r\n  \r\n    <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"10px\" width=\"100%\" style=\"padding: 30px 30px 30px 60px;\">\r\n      <tr>\r\n          <td> \r\n           <img alt=\"Blog\" src=\"https://www.hubspot.com/hubfs/assets/hubspot.com/style-guide/brand-guidelines/guidelines_sample-illustration-3.svg\" width=\"200px\" align=\"middle\">\r\n            \r\n         <h2> Vivamus ac elit eget </h2>\r\n            <p>\r\n              Vivamus ac elit eget dolor placerat tristique et vulputate nibh. Sed in elementum nisl, quis mollis enim. Etiam gravida dui vel est euismod, at aliquam ipsum euismod. \r\n      \r\n              </p>\r\n  \r\n          </td>\r\n        \r\n          <td>\r\n            \r\n            <img alt=\"Shopping\" src=\"https://www.hubspot.com/hubfs/assets/hubspot.com/style-guide/brand-guidelines/guidelines_sample-illustration-5.svg\" width=\"200px\" align=\"middle\">\r\n         <h2> Suspendisse tincidunt iaculis </h2>\r\n            <p>\r\n              Suspendisse tincidunt iaculis fringilla. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras laoreet elit purus, quis pulvinar ipsum pulvinar et. \r\n      \r\n              </p> \r\n          </td>\r\n          </tr>\r\n      \r\n            <tr>\r\n              <td> <button> Button 2 </button> </td> \r\n              <td> <button> Button 3 </button> </td> \r\n              \r\n  </table>\r\n     \r\n        <! Banner Row --> \r\n  <table role=\"presentation\" bgcolor=\"#EAF0F6\" width=\"100%\" style=\"margin-top: 50px;\" >\r\n      <tr>\r\n          <td align=\"center\" style=\"padding: 30px 30px;\">\r\n            \r\n         <h2> Nullam porta arcu </h2>\r\n            <p>\r\n              Nam vel lobortis lorem. Nunc facilisis mauris at elit pulvinar, malesuada condimentum erat vestibulum. Pellentesque eros tellus, finibus eget erat at, tempus rutrum justo. \r\n      \r\n              </p>\r\n              <a href=\"#\"> Ask us a question</a>      \r\n          </td>\r\n          </tr>\r\n      </table>\r\n  \r\n        <! Unsubscribe Footer --> \r\n      \r\n  <table role=\"presentation\" bgcolor=\"#F5F8FA\" width=\"100%\" >\r\n      <tr>\r\n          <td align=\"left\" style=\"padding: 30px 30px;\">\r\n            <p style=\"color:#99ACC2\"> Made with &hearts; at HubSpot HQ </p>\r\n              <a class=\"subtle-link\" href=\"#\"> Unsubscribe </a>      \r\n          </td>\r\n          </tr>\r\n      </table> \r\n      </div>\r\n    </body>\r\n      </html>");
+            _mailSettings = mailSettings.Value;
         }
+
+        //public Task SendEmailAsync(string email, string subject, string htmlMessage)
+        //{
+            
+        //    SmtpClient client = new SmtpClient
+        //    {
+        //        Port = _mailSettings.port,
+        //        Host = _mailSettings.server,
+        //        EnableSsl = true,
+                
+        //        DeliveryMethod = SmtpDeliveryMethod.Network,
+        //        UseDefaultCredentials = false,
+        //        Credentials = new NetworkCredential(_mailSettings.username, _mailSettings.password)
+        //    };
+        //    string filePath = Directory.GetCurrentDirectory() + "\\Email\\Templates\\Verified.html";
+        //    string emailTemplateText = File.ReadAllText(filePath);
+        //    emailTemplateText = string.Format(emailTemplateText, email, DateTime.Today.Date.ToShortDateString());
+        //    var mm = new MailMessage();
+        //    mm.Subject = subject;
+        //    mm.Body = htmlMessage; 
+        //    mm.IsBodyHtml = true;
+        //    mm.To.Add(new MailboxAddress("ConJob", email));
+        //    mm.From = _mailSettings.senderemail;
+            
+        //    //return client.SendMailAsync("temp@wpoven.com", email, subject, htmlMessage);
+        //    return client.SendMailAsync(mm);
+        //}
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+
+            try
+            {
+                using (MimeMessage emailMessage = new MimeMessage())
+                {
+                    MailboxAddress emailFrom = new MailboxAddress(_mailSettings.sendername, _mailSettings.senderemail);
+                    emailMessage.From.Add(emailFrom);
+
+                    MailboxAddress emailTo = new MailboxAddress(email, email);
+                    emailMessage.To.Add(emailTo);
+
+                    emailMessage.Subject = "Hello";
+
+                    string filePath = Directory.GetCurrentDirectory() + "\\Email\\Templates\\Verified.html";
+                    string emailTemplateText = File.ReadAllText(filePath);
+
+                    emailTemplateText = string.Format(emailTemplateText, email, DateTime.Today.Date.ToShortDateString());
+
+                    BodyBuilder emailBodyBuilder = new BodyBuilder();
+                    emailBodyBuilder.HtmlBody = emailTemplateText;
+                    emailBodyBuilder.TextBody = "Plain Text goes here to avoid marked as spam for some email servers.";
+
+                    emailMessage.Body = emailBodyBuilder.ToMessageBody();
+
+                    using (SmtpClient mailClient = new SmtpClient())
+                    {
+                        mailClient.Connect(_mailSettings.server, _mailSettings.port, MailKit.Security.SecureSocketOptions.StartTls);
+                        mailClient.Authenticate(_mailSettings.username, _mailSettings.password);
+                        await mailClient.SendAsync(emailMessage);
+                        mailClient.Disconnect(true);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Exception Details
+
+            }
+        }
+        
     }
 }
