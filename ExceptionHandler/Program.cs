@@ -7,6 +7,7 @@ using DataLayer.Encryption;
 using DataLayer.Interfaces;
 using DataLayer.Services;
 using Entities.Config;
+using ExceptionHandler.Exceptions;
 using ExceptionHandler.Policy;
 using ExceptionHandler.Policy.Requirement;
 using Hangfire;
@@ -121,7 +122,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
 app.UseAuthentication();
 

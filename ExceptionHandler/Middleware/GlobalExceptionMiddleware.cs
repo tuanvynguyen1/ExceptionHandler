@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Plantagoo.Api.Middleware
+namespace ExceptionHandler.Middleware
 {
     public static class GlobalExceptionMiddleware
     {

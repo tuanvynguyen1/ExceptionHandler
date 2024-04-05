@@ -19,18 +19,18 @@ namespace Entities
 
         [Required]
         [StringLength(50)]
-        public string JobTitle { get; set; }
+        public string JobTitle { get; set; } = string.Empty;
         [Required]
         [DataType(DataType.Text)]
         [Column(TypeName = "text")]
-        public string JobDescription { get; set; }
+        public string JobDescription { get; set; } = string.Empty ;
 
         [Required]
         public job_status JobStatus { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
-        public DateTime ExpiredDate { get; set; }
-        public ICollection<JobSkillModel> Skill { get; }
+        public DateTime ExpiredDate { get; set; } 
+        public virtual ICollection<JobSkillModel> Skill { get; set; }
     }
 }

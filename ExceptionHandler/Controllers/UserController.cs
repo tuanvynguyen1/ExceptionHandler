@@ -43,7 +43,7 @@ namespace ExceptionHandler.Controllers
                 EResponseType.Forbid => Forbid(serviceResponse.Message),
                 _ => throw new NotImplementedException()
             };
-        }
+        } 
         [Route("/me")]
         [Produces("application/json")]
         [HttpGet]

@@ -1,14 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BCrypt.Net;
-using Microsoft.AspNetCore.Identity;
-
-
-namespace DataLayer.Encryption
+﻿namespace DataLayer.Encryption
 {
     public class Bcrypt : IPasswordHasher
     {

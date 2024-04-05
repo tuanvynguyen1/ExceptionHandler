@@ -6,7 +6,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Plantagoo.Api.Middleware
+namespace ExceptionHandler.Middleware
 {
     public class ExceptionMiddleware
     {
